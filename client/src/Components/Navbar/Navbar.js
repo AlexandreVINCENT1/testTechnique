@@ -1,17 +1,29 @@
-import {Components} from "react";
+import { Component } from "react";
+import { Link } from "react-router-dom";
 import './Navbar.css';
 
-export default class Navbar extends Components {
 
-    #parts = []
+/**
+ * Ce composant gère la navbar affichée avec
+ * ses différents liens
+ */
+
+export default class Navbar extends Component {
+
+    #parts = [];
+
     constructor(props) {
-        super(props);
-        this.#configure();
+        super();
+        this.configure(props.parts);
     }
 
-    #configure(parts) {
-        for(let i in parts)
-            this.#parts.push(<li>i</li>);
+    configure(parts) {
+        for(let i of parts) {
+            if (parts[0] === i)
+                this.#parts.push(<Link to="/" key={i}><li>{i}</li></Link>);
+            else
+                this.#parts.push(<Link to={"/" + i} key={i}><li>{i}</li></Link>);
+        }
     }
 
     render() {

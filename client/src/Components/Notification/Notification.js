@@ -1,0 +1,101 @@
+import {Component} from "react";
+import "./Notification.css";
+import axios from "axios";
+
+
+/**
+ * Ce composant représente les lignes du tableau de notifications
+ * Les notifications lu/ non lu sont différenciées par leur couleur
+ * gris foncé = non lu
+ * gris clair = lu
+ * Cliqué sur une notification la passe de non lu à lu et
+ * met à jour via un appel Axios cette notification à sur le serveur flask
+ */
+
+class Line extends Component {
+    
+    #api = "http://localhost:8080/notifications";
+    #header = { 'Content-Type': 'application/json' };
+
+    constructor(props) {
+        super(props);
+        this.props = props;
+        this.state = {
+            style: {...this.props.style},
+            read: props.isRead,
+        };
+        this.isRead = this.isRead.bind(this);
+    }
+
+    componentDidMount() {
+        if (this.state.read === true)
+            this.setState({style: {...{background: "#a4b0be"}}});
+    }
+
+    async isRead(e) {
+        const style = {background: "#a4b0be"};
+        this.setState({
+            read: true,
+            style: {...style},
+        });
+        await axios.put(this.#api, { headers: this.#header, id: this.props.id});
+    }
+
+    render() {
+        return (
+            <div key={this.props.id} onClick={this.isRead} className="line" style={this.state.style}>
+                <span>{this.props.title}</span>
+                <span>{this.props.description}</span>
+            </div>
+        )
+    }
+}
+
+/**
+ * Ce composant gère le tableau de notifications
+ * Les notifications sont chargées via un appel Axios
+ * toutes les 5 secondes au serveur Flask
+ */
+
+export default class Notification extends Component {
+
+    #api = "http://localhost:8080/notifications";
+    #child = [];
+    header = { 'Content-Type': 'application/json' }
+
+    constructor(props) {
+        super(props);
+        this.props = props;
+        this.state = {
+            notification: [],
+        }
+        this.loadNotifications = this.loadNotifications.bind(this);
+    }
+
+    componentDidMount() {
+        this.loadNotifications();
+        this.interval = setInterval(this.loadNotifications, 5000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
+    async loadNotifications() {
+        const res = (await axios.get(this.#api)).data;
+        await res.data.map((el, i) => {
+            if (i >= this.#child.length)
+                this.#child.push((<Line key={i} id={i} isRead={el.isRead} title={el.title} description={el.description} />));
+        })
+        this.setState({notification: this.#child});
+    }
+
+    render() {
+        return(
+            <div props={this.props} className="Notification">
+                <div className="Title">Notifications</div>
+                <div className="Content">{this.state.notification}</div>
+            </div>
+        )
+    }
+};
