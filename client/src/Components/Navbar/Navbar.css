@@ -7,7 +7,7 @@
     background: transparent;
 }
 
-ul {
+.Navbar ul {
     width: 50%;
     height: 100%;
     margin: 0;
@@ -19,15 +19,16 @@ ul {
     list-style-type: none;
 }
 
-a:hover {
+.Navbar a:hover {
     background: rgba(0, 0, 0, 0.1);
+    font-size: larger;
 }
 
-a:active {
+.Navbar a:active {
     color: rgba(0, 0, 0, 0.3);
 }
 
-a {
+.Navbar a {
     width: 20%;
     height: 100%;
     color: white;

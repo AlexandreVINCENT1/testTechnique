@@ -4,6 +4,7 @@ import './App.css';
 import Navbar from "./Components/Navbar/Navbar";
 import Home from "./Components/Pages/Home";
 import Book from "./Components/Pages/Book";
+import PageNotFound from "./Components/Pages/404";
 
 
 /**
@@ -31,6 +32,7 @@ export default class App extends Component {
                     <Switch>
                         <Route path="/" exact component={Home} />
                         <Route path="/book" exact component={Book}/>
+                        <Route component={PageNotFound}/>
                     </Switch>
                 </div>
             </Router>

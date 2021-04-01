@@ -33,19 +33,24 @@ class Line extends Component {
     }
 
     async isRead(e) {
-        const style = {background: "#a4b0be"};
-        this.setState({
-            read: true,
-            style: {...style},
-        });
-        await axios.put(this.#api, { headers: this.#header, id: this.props.id});
+        try {
+            const style = {background: "#a4b0be"};
+            this.setState({
+                read: true,
+                style: {...style},
+            });
+            const id = this
+            await axios.put(this.#api, { headers: this.#header, id: this.props.id});
+        } catch (err) {
+            console.error("Error during server's call");
+        }
     }
 
     render() {
         return (
             <div key={this.props.id} onClick={this.isRead} className="line" style={this.state.style}>
-                <span>{this.props.title}</span>
-                <span>{this.props.description}</span>
+                <span className="title">{this.props.title}</span>
+                <span className="content">{this.props.description}</span>
             </div>
         )
     }
@@ -74,7 +79,7 @@ export default class Notification extends Component {
 
     componentDidMount() {
         this.loadNotifications();
-        this.interval = setInterval(this.loadNotifications, 5000);
+        this.interval = setInterval(this.loadNotifications, 30000);
     }
 
     componentWillUnmount() {
@@ -82,12 +87,18 @@ export default class Notification extends Component {
     }
 
     async loadNotifications() {
-        const res = (await axios.get(this.#api)).data;
-        await res.data.map((el, i) => {
-            if (i >= this.#child.length)
-                this.#child.push((<Line key={i} id={i} isRead={el.isRead} title={el.title} description={el.description} />));
-        })
-        this.setState({notification: this.#child});
+        try {
+            const res = (await axios.get(this.#api)).data;
+            if (this.#child.length > res.data.length)
+                await this.#child.splice(0, this.#child.length);
+            await res.data.map((el, i) => {
+                if (i >= this.#child.length)
+                this.#child.unshift((<Line key={i} id={i} isRead={el.isRead} title={el.title} description={el.description} />));
+            });
+            this.setState({notification: this.#child});
+        } catch (e) {
+            console.error("Error during server's call", e);
+        }
     }
 
     render() {

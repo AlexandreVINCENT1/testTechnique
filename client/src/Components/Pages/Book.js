@@ -53,15 +53,17 @@ class Book extends Component {
             <div className="Form">
                 <div className="bookingForm">
                     <span>Réservation</span>
-                    <label className="title">Quoi ?</label>
-                    <select onChange={this.changeWhat} value={this.state.what}>
-                        <option value="bateau">Bateau</option>
-                        <option value="train">Train</option>
-                        <option value="avion">Avion</option>
-                    </select>
-                    <label>Où</label>
-                    <input onChange={this.changePlace} value={this.state.where} required></input>
-                    <button onClick={this.submitForm}>Réserver</button>
+                    <div className="Content">
+                        <label className="title">Quoi</label>
+                        <select onChange={this.changeWhat} value={this.state.what}>
+                            <option value="bateau">Bateau</option>
+                            <option value="train">Train</option>
+                            <option value="avion">Avion</option>
+                        </select>
+                        <label>Où</label>
+                        <input onChange={this.changePlace} value={this.state.where} required></input>
+                        <button onClick={this.submitForm}>Réserver</button>
+                    </div>
                 </div>
             </div>
         </div>)
